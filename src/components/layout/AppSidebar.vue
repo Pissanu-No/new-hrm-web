@@ -95,9 +95,24 @@ const navigation = [
   {
     label: 'Employees',
     items: [
-      { label: 'Employee Profiles', to: '/employees', icon: Users },
-      { label: 'Reporting Line', to: '/employees/reporting-lines', icon: GitBranch },
-      { label: 'Employee Assignment', to: '/employees/assignments', icon: Users }
+      {
+        label: 'Employee Profiles',
+        to: '/employees',
+        icon: Users,
+        activeRouteNames: ['employees', 'employee-create', 'employee-profile', 'employee-edit']
+      },
+      {
+        label: 'Reporting Line',
+        to: '/employees/reporting-lines',
+        icon: GitBranch,
+        activeRouteNames: ['employee-reporting-lines']
+      },
+      {
+        label: 'Employee Assignment',
+        to: '/employees/assignments',
+        icon: Users,
+        activeRouteNames: ['employee-assignments']
+      }
     ]
   },
   {
@@ -112,6 +127,14 @@ const navigation = [
 ]
 
 function isActive(item) {
-  return item.to && route.path.startsWith(item.to)
+  if (!item.to) {
+    return false
+  }
+
+  if (item.activeRouteNames?.length) {
+    return item.activeRouteNames.includes(route.name)
+  }
+
+  return route.path === item.to
 }
 </script>
