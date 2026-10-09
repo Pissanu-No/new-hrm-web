@@ -22,7 +22,13 @@
           <AppCard title="Name in English" description="Legal or official employee name in English.">
             <div class="grid gap-4 md:grid-cols-2">
               <AppInput v-model="form.employeeCode" label="Employee Code" :error="errors.employeeCode" />
-              <AppSelect v-model="form.titleName" label="Title" placeholder="Select title" :options="englishTitles" />
+              <AppSelect
+                v-model="form.titleName"
+                label="Title"
+                placeholder="Select title"
+                :options="englishTitles"
+                @update:model-value="syncThaiTitle"
+              />
               <AppInput v-model="form.firstName" label="First Name" :error="errors.firstName" />
               <AppInput v-model="form.middleName" label="Middle Name" />
               <AppInput v-model="form.lastName" label="Last Name" :error="errors.lastName" />
@@ -32,7 +38,13 @@
 
           <AppCard title="Name in Thai" description="Local language name used in employee documents and HR records.">
             <div class="grid gap-4 md:grid-cols-2">
-              <AppSelect v-model="form.titleNameLocal" label="คำนำหน้า" placeholder="เลือกคำนำหน้า" :options="thaiTitles" />
+              <AppSelect
+                v-model="form.titleNameLocal"
+                label="คำนำหน้า"
+                placeholder="เลือกคำนำหน้า"
+                :options="thaiTitles"
+                @update:model-value="syncEnglishTitle"
+              />
               <AppInput v-model="form.firstNameLocal" label="ชื่อ" />
               <AppInput v-model="form.middleNameLocal" label="ชื่อกลาง" />
               <AppInput v-model="form.lastNameLocal" label="นามสกุล" />
@@ -55,7 +67,12 @@
 
         <div class="space-y-6">
           <AppCard title="Employment" description="Current employment status and account visibility.">
-            <AppSelect v-model="form.employeeStatus" label="Employee Status" placeholder="Select status" :options="statusOptions" :error="errors.employeeStatus" />
+            <div class="grid gap-4 md:grid-cols-2">
+              <AppSelect v-model="form.employeeStatus" label="Employee Status" placeholder="Select status" :options="statusOptions" :error="errors.employeeStatus" />
+              <AppInput v-if="form.employeeStatus === 'ACTIVE'" v-model="form.startDate" label="วันเริ่มงาน" type="date" />
+              <AppInput v-if="form.employeeStatus === 'PROBATION'" v-model="form.probationPassDate" label="วันที่ผ่านทดลองงาน" type="date" />
+              <AppInput v-if="form.employeeStatus === 'RESIGNED'" v-model="form.resignationEffectiveDate" label="วันที่มีผลลาออก" type="date" />
+            </div>
           </AppCard>
 
           <AppCard
@@ -302,6 +319,18 @@ const draft = reactive({})
 
 const englishTitles = ['Mr.', 'Ms.', 'Mrs.', 'Other']
 const thaiTitles = ['นาย', 'นางสาว', 'นาง', 'อื่นๆ']
+const thaiTitleByEnglishTitle = {
+  'Mr.': 'นาย',
+  'Ms.': 'นางสาว',
+  'Mrs.': 'นาง',
+  Other: 'อื่นๆ'
+}
+const englishTitleByThaiTitle = {
+  นาย: 'Mr.',
+  นางสาว: 'Ms.',
+  นาง: 'Mrs.',
+  'อื่นๆ': 'Other'
+}
 const statusOptions = ['ACTIVE', 'INACTIVE', 'RESIGNED', 'TERMINATED', 'ON_LEAVE', 'PROBATION']
 const educationLevels = ['HIGH_SCHOOL', 'DIPLOMA', 'BACHELOR', 'MASTER', 'DOCTORATE', 'OTHER']
 
@@ -342,6 +371,9 @@ const form = reactive({
   workEmail: '',
   mobilePhone: '',
   employeeStatus: 'ACTIVE',
+  startDate: '',
+  probationPassDate: '',
+  resignationEffectiveDate: '',
   maritalStatus: '',
   bloodType: '',
   nationalId: '',
@@ -357,6 +389,14 @@ const errors = reactive({
   lastName: '',
   employeeStatus: ''
 })
+
+function syncThaiTitle(title) {
+  form.titleNameLocal = thaiTitleByEnglishTitle[title] || ''
+}
+
+function syncEnglishTitle(title) {
+  form.titleName = englishTitleByThaiTitle[title] || ''
+}
 
 const emptyDrafts = {
   address: { addressType: 'REGISTERED_ADDRESS', addressLabel: '', houseNo: '', villageNo: '', villageName: '', buildingName: '', floorNo: '', roomNo: '', alley: '', road: '', subDistrict: '', district: '', province: '', postalCode: '', country: 'Thailand', fullAddress: '', isPrimary: false, isSameAsRegisteredAddress: false, effectiveStartDate: '', effectiveEndDate: '', note: '' },

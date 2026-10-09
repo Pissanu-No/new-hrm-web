@@ -5,7 +5,7 @@
       <AppHeader />
       <main class="px-4 py-6 sm:px-6 lg:px-8">
         <AppBreadcrumb class="mb-5" />
-        <RouterView />
+        <RouterView :key="$route.fullPath" />
       </main>
     </div>
   </div>

@@ -74,6 +74,7 @@ import { useAppStore } from '@/stores/appStore'
 
 const route = useRoute()
 const appStore = useAppStore()
+const employeeProfileRouteNames = ['employees', 'employee-create', 'employee-profile', 'employee-edit']
 
 const navigation = [
   {
@@ -112,6 +113,12 @@ const navigation = [
 ]
 
 function isActive(item) {
-  return item.to && route.path.startsWith(item.to)
+  if (!item.to) return false
+
+  if (item.to === '/employees') {
+    return employeeProfileRouteNames.includes(route.name)
+  }
+
+  return route.path === item.to || route.path.startsWith(`${item.to}/`)
 }
 </script>

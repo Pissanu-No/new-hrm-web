@@ -25,7 +25,7 @@ const overviewItems = computed(() => [
   { label: 'Personal email', value: props.employee.personalEmail },
   { label: 'Mobile phone', value: props.employee.mobilePhone },
   { label: 'Nationality', value: props.employee.nationality },
-  { label: 'Birth date', value: props.employee.birthDate },
+  { label: 'Birth date', value: formatBirthDate(props.employee.birthDate) },
   { label: 'Marital status', value: props.employee.maritalStatus },
   { label: 'Blood type', value: props.employee.bloodType },
   { label: 'National ID', value: props.employee.nationalId },
@@ -40,4 +40,19 @@ const employmentItems = computed(() => [
 ])
 
 const items = computed(() => props.employmentOnly ? employmentItems.value : overviewItems.value)
+
+function formatBirthDate(value) {
+  if (!value) return ''
+
+  const [year, month, day] = Array.isArray(value)
+    ? value
+    : String(value).slice(0, 10).split('-')
+  const monthNames = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
+
+  if (year && month && day && monthNames[Number(month) - 1]) {
+    return `${String(day).padStart(2, '0')} ${monthNames[Number(month) - 1]} ${year}`
+  }
+
+  return value
+}
 </script>
